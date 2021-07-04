@@ -159,3 +159,5 @@ ElevatedButton(
         lastDate: DateTime.now()).then((value) => _toDoWithTheValue);
   }
   ```
+
+### These are all of the new items for this course, an image of the app is shown below.
