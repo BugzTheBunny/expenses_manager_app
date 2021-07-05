@@ -49,52 +49,58 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Title'),
-              controller: _titleController,
-              onSubmitted: (_) => submitData(),
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Amount'),
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => submitData(),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Date selected: ${DateFormat.yMd().format(_dateController)}',
-                      style: TextStyle(fontSize: 16),
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Container(
+          padding: EdgeInsets.only(
+              top: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 10,
+              right: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(labelText: 'Title'),
+                controller: _titleController,
+                onSubmitted: (_) => submitData(),
+              ),
+              TextField(
+                decoration: InputDecoration(labelText: 'Amount'),
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                onSubmitted: (_) => submitData(),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Date selected: ${DateFormat.yMd().format(_dateController)}',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 10),
-                    child: TextButton(
-                        onPressed: _presentDatePicker,
-                        child: Text('Select date',
-                            style: TextStyle(fontSize: 16))),
-                  )
-                ],
+                    Container(
+                      margin: EdgeInsets.only(left: 10),
+                      child: TextButton(
+                          onPressed: _presentDatePicker,
+                          child: Text('Select date',
+                              style: TextStyle(fontSize: 16))),
+                    )
+                  ],
+                ),
               ),
-            ),
-            ElevatedButton(
-              child: Text(
-                'Add Transaction',
-                style: TextStyle(fontSize: 17),
+              ElevatedButton(
+                child: Text(
+                  'Add Transaction',
+                  style: TextStyle(fontSize: 17),
+                ),
+                onPressed: submitData,
               ),
-              onPressed: submitData,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

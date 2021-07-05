@@ -160,5 +160,145 @@ ElevatedButton(
   }
   ```
 
-### These are all of the new items for this course, an image of the app is shown below.
+
+### These are all of the new items for this section, an image of the app is shown below.
 ![Screenshot_1625381798](https://user-images.githubusercontent.com/44586585/124376154-3cf45d80-dcae-11eb-940b-8238efb5359b.png)
+
+---
+# Section 2 - Responsive and Adaptive Interface.
+
+
+### Calculating size dynamically
+
+- `MediaQuery()` - This is taken from CSS like most of the things, this allows us to change behaviours / styles depending on the device/screen sizes.
+  - example: `height: MediaQuery.of(context).size.height * 0.6` this will give a heigh of 60% of the device screen.
+
+- When using `MeduaQuery()` it's important to take to consideration the appBar, and the notifications bar, as they are part of the screen.
+  we would put the appBar as a value, to which we can access to dedact the size, and we would use `appBar.preferredSize.height` to get the size.
+  
+  for the notifications bar, we will use `MediaQuery.of(context).padding.top)` to get the size.
+
+```
+final appBar = AppBar(
+      title: Text('My Expenses'),
+      actions: [
+        IconButton(
+            onPressed: () => _startAddNewTransaction(context),
+            icon: Icon(Icons.add))
+      ],
+    );
+    return Scaffold(
+      appBar: appBar,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.3,
+                child: Chart(_recentTransactions)),
+            Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.7,
+                child: TransactionList(_userTransactions, _deleteTransaction)),
+          ],
+        ),
+      ),
+```
+
+- We also want to size the chart and the chart bars dynamically, because for example on a bigger screen there could be a lot of white space, and we dont want that, we need it to scale, so here comes the `LayoutBuilder()` widget.
+
+  - param `builder`: takes `context`, and `constrains`.
+    - *Constrains are a features which Flutter offers which define how much space a widget may take*
+    - **Constrains**
+    
+      we can use the constrain from inside the `LayoutBuilder()` to calculate the sizes of the items, and use that to set the data dynamically.
+
+---
+## Controlling the device orientation. - FORCING Orientation
+*For example if we dont want the app to change to horizontal on a small screen*
+
+An example of forcing orientation (This will force portrait, for up / down, but no landscape mode.)
+```
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  runApp(MyApp());
+}
+```
+
+---
+## Controlling the device orientation. - Rendering by orientation
+`Switch(value: false, onChanged: onChanged)` : the switch widgets is a built in widgets that can be used as a true/false switch.
+the switch value should be set manually from outside.
+
+---
+## Showing different content based on orientation.
+`MediaQuery.of(context).orientation;` can provide you the current screen orientation.
+*there is a new if check, implemented in flutter 2.2.2, which allows to show widgets depending on the value*
+```
+if (isLandscape) // If landscape variable is true, then this widget will be rendered.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Show Chart'),
+                  Switch(
+                      value: _showChart,
+```
+*You can save widgets inside variables, to save code duplication and make the code more easy to read.*
+**If you store the widgets inside variables, and use the if statments style from above, that will save lots of boilerplate code**
+
+
+---
+## Padding to fit the Soft Keyboard. 
+*Sometimes we will need to move the fields above the keyboard, to see what we type, so we need to pad the widget to move up, depending the the widget keyboard size, and again, we can get the size via `MediaQuery()`*
+
+`MediaQuery.of(context).viewInsets.bottom` => 
+*The parts of the display that are completely obscured by system UI, typically by the device's keyboard.*
+*When a mobile device's keyboard is visible viewInsets.bottom corresponds to the top of the keyboard.*
+
+**How we use the keyboard size move the widget upwords**:
+```
+return SingleChildScrollView( // makes it scrollable
+      child: Card(
+        elevation: 5,
+        child: Container(
+          padding: EdgeInsets.only(
+              top: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom, // gets the bottom size
+              left: 10,
+              right: 10),
+```
+- **TIP** *(Easy way to check orientation)* :
+
+  `MediaQuery.of(context).size.width > MediaQuery.of(context).size.height ? .... : ....`
+
+- **TIP** *(Save more boiler plate code, and improve performance)* :
+
+  `final mediaQ = MediaQuery.of(context)`: 
+  - store the media variable inside another variable, to save some lines of code 
+  - If we initiat it only one time, then we call it only one time, and then only use it, meaning it can save some rerendering, and save 'reconnecting' to MediaQuery again.
+
+
+---
+## Checking the device platform. 
+
+- Some widgets have `.adaptive()` method, it takes the normal widget parameters, but it just knows how to adapt to the platform.
+
+- To check out the platform, you need to `import 'dart:io';`, and the you will be able to use platfrom cheking, for example, here we check if the platform is IOS, it it is IOS, we will not render the floating button, otherwise, we will :
+
+```
+floatingActionButton: Platform.isIOS // <= here we check.
+          ? Container()
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () => _startAddNewTransaction(context),
+              elevation: 5,
+              backgroundColor: Theme.of(context).accentColor,
+            )
+```
